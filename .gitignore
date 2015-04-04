@@ -1,0 +1,6 @@
+# OS related files
+.DS_Store
+
+# Maven target folder
+/target
+
