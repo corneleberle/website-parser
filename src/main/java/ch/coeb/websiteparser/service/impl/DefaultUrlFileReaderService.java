@@ -1,5 +1,6 @@
 package ch.coeb.websiteparser.service.impl;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -8,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import ch.coeb.websiteparser.exception.WebsiteParserException;
@@ -25,9 +25,8 @@ public class DefaultUrlFileReaderService implements UrlFileReaderService {
 
 	@Override
 	public List<String> readUrlsFromFile(String pathToFile) {
-		Resource urlsResource = applicationContext.getResource(pathToFile);
 		try {
-			List<String> urls = FileUtils.readLines(urlsResource.getFile());
+			List<String> urls = FileUtils.readLines(new File(pathToFile));
 			LOGGER.info("Succefully read {} URL(s)", urls.size());
 			return urls;
 		} catch (IOException e) {

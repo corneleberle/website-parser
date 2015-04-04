@@ -62,7 +62,7 @@
 			</plugin>
 
 			<plugin>
-				<!-- useage: mvn jgitflow:release-start jgitflow:release-finish -DpushReleases=true -DreleaseVersion=1.0.0.RELEASE -DdevelopmentVersion=1.0.1.SNAPSHOT -->
+				<!-- useage: mvn jgitflow:release-start jgitflow:release-finish -DnoDeploy=true -DpushReleases=true -DreleaseVersion=1.0.1.RELEASE -DdevelopmentVersion=1.0.2.SNAPSHOT -->
 				<groupId>external.atlassian.jgitflow</groupId>
 				<artifactId>jgitflow-maven-plugin</artifactId>
 				<version>1.0-m4.3</version>
