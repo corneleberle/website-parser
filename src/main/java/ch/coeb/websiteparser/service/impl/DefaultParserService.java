@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.annotation.PostConstruct;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -18,20 +16,13 @@ import ch.coeb.websiteparser.service.ParserService;
 @Service
 public class DefaultParserService implements ParserService {
 
-	@Value("${parser.review.count}")
+	@Value("${parser.review.count:20}")
 	private Integer numberOfReviews;
 
 	private Pattern stylePattern = Pattern
 			.compile(".*width:\\s*(\\d{0,3})%?;.*");
 
 	private static final String EMPTY_STRING = "";
-
-	@PostConstruct
-	private void initialize() {
-		if (numberOfReviews == null) {
-			numberOfReviews = Integer.valueOf(20);
-		}
-	}
 
 	@Override
 	public void parseHtml(String html, List<String> fields) {
