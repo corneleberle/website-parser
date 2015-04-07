@@ -10,17 +10,23 @@ import java.util.List;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import ch.coeb.websiteparser.exception.ResourceNotAvailableException;
 import ch.coeb.websiteparser.service.HtmlService;
 import ch.coeb.websiteparser.service.ParserService;
 import ch.coeb.websiteparser.service.UrlFileReaderService;
 
 @SpringBootApplication
 public class WebsiteParserApplication implements CommandLineRunner {
+
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(WebsiteParserApplication.class);
 
 	@Autowired
 	private UrlFileReaderService urlFileReader;
@@ -43,6 +49,10 @@ public class WebsiteParserApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
+		if (args.length < 2) {
+			return;
+		}
+
 		List<String> urls = urlFileReader.readUrlsFromFile(args[0]);
 
 		Writer writer = null;
@@ -54,11 +64,15 @@ public class WebsiteParserApplication implements CommandLineRunner {
 			printer = new CSVPrinter(writer, CSVFormat.EXCEL.withDelimiter(';'));
 
 			for (String url : urls) {
-				String html = htmlService.getHtml(new URL(url));
-
 				List<String> csvColumns = new ArrayList<String>();
 				csvColumns.add(url);
-				parserService.parseHtml(html, csvColumns);
+
+				try {
+					String html = htmlService.getHtml(new URL(url));
+					parserService.parseHtml(html, csvColumns);
+				} catch (ResourceNotAvailableException e) {
+					LOGGER.warn("URL [{}] not valid", url);
+				}
 
 				printer.printRecord(csvColumns);
 			}

@@ -4,10 +4,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import ch.coeb.websiteparser.service.ParserService;
@@ -15,10 +18,20 @@ import ch.coeb.websiteparser.service.ParserService;
 @Service
 public class DefaultParserService implements ParserService {
 
+	@Value("${parser.review.count}")
+	private Integer numberOfReviews;
+
 	private Pattern stylePattern = Pattern
 			.compile(".*width:\\s*(\\d{0,3})%?;.*");
 
 	private static final String EMPTY_STRING = "";
+
+	@PostConstruct
+	private void initialize() {
+		if (numberOfReviews == null) {
+			numberOfReviews = Integer.valueOf(20);
+		}
+	}
 
 	@Override
 	public void parseHtml(String html, List<String> fields) {
@@ -31,7 +44,7 @@ public class DefaultParserService implements ParserService {
 			addText(reviewElement, fields);
 
 			count++;
-			if (count >= 20) {
+			if (count >= numberOfReviews) {
 				break;
 			}
 		}
